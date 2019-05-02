@@ -1,0 +1,38 @@
+﻿@using OrderManagment.Core.Models
+@model ProductDataModel
+@{
+    ViewBag.Title = "CreateProduct";
+}
+<h2>Ürün Ekle/Düzenle</h2>
+<div class="container">
+    <div class="row">
+        @using (Html.BeginForm("CreateProduct", "product", FormMethod.Post))
+        {
+
+            @Html.AntiForgeryToken();
+            @Html.HiddenFor(a => a.Product.id)
+            <div class="form-group">
+                @Html.LabelFor(a => a.Product.name)
+                @Html.TextBoxFor(a => a.Product.name, new { @class = "form-control" })
+                @Html.ValidationMessageFor(a => a.Product.name, null, new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(a => a.Product.Price)
+                @Html.TextBoxFor(a => a.Product.Price, new { @class = "form-control" })
+                @Html.ValidationMessageFor(a => a.Product.Price, null, new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(a => a.Product.CategoryID)
+                @Html.DropDownListFor(a => a.Product.CategoryID, new SelectList(Model.Categories, "id", "name"), new { @class = "form-control" })
+                @Html.ValidationMessageFor(a => a.Product.CategoryID, null, new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Kaydet" class="btn btn-primary" />
+            </div>
+        }
+    </div>
+    <div class="row">
+        <a href="@Url.Action("index","product")" class="btn btn-default"> Geri </a>
+    </div>
+</div>
+

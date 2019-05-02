@@ -1,0 +1,70 @@
+﻿@using OrderManagment.Entities.Entities
+@model IEnumerable<Customer>
+@{
+    ViewBag.Title = "Index";
+}
+<link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
+<h2>Müşteri Listesi</h2>
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <a href="@Url.Action("CreateCustomer","customer")" class="btn btn-success"> Ekle </a>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <table class="table" id="Productlist">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Müşteri Adı</th>
+                    <th scope="col">Müşteri Adresi</th>
+                    <th scope="col">Oluşturma Zamanı</th>
+                    <th scope="col">Düzenle</th>
+                    <th scope="col">Sil</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                <tr>
+                    <th scope="row">@item.id</th>
+                    <td>@item.name</td>
+                    <td>@item.Adress</td>
+                    <td>@item.CreateDate</td>
+                    <td><a href="@Url.Action("CreateCustomer","customer",new { id = item.id })" class="btn btn-warning small"> Düzenle </a></td>
+                    <td><a href="@Url.Action("DeleteCustomer","customer",new { id = item.id })" class="btn btn-danger small"> Sil </a></td>
+                </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@section scripts{
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready( function () {
+            $('#Productlist').DataTable();
+        });
+
+        var table = $('#Productlist').DataTable();
+
+        $('#Productlist tbody').on('click', 'tr', function () {
+
+            console.log(table.row(this).data());
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+
+        $('#button').click(function () {
+            table.row('.selected').remove().draw(false);
+        });
+    </script>
+}
+

@@ -1,0 +1,33 @@
+﻿@using OrderManagment.Entities.Entities
+@model Category
+@{
+    ViewBag.Title = "CreateCategory";
+}
+<h2>Kategori Ekle/Düzenle</h2>
+<div class="container">
+    <div class="row">
+        @using (Html.BeginForm("CreateCategory", "category", FormMethod.Post))
+        {
+
+            @Html.AntiForgeryToken();
+            @Html.HiddenFor(a=>a.id)
+            <div class="form-group">
+                @Html.LabelFor(a => a.name)
+                @Html.TextBoxFor(a => a.name, new { @class = "form-control" })
+                @Html.ValidationMessageFor(a => a.name, null, new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(a => a.Defination)
+                @Html.TextBoxFor(a => a.Defination, new { @class = "form-control" })
+                @Html.ValidationMessageFor(a => a.Defination, null, new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Kaydet" class="btn btn-primary" />
+            </div>
+        }
+    </div>
+    <div class="row">
+        <a href="@Url.Action("index","category")" class="btn btn-default"> Geri </a>
+    </div>
+</div>
+

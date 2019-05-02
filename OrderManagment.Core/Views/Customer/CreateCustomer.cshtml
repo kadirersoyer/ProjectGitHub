@@ -1,0 +1,33 @@
+﻿@using OrderManagment.Entities.Entities
+@model Customer
+@{
+    ViewBag.Title = "Create Customer";
+}
+<h2>Müşteri Ekle/Düzenle</h2>
+<div class="container">
+    <div class="row">
+        @using (Html.BeginForm("CreateCustomer", "customer", FormMethod.Post))
+        {
+
+            @Html.AntiForgeryToken();
+            @Html.HiddenFor(a => a.id)
+            <div class="form-group">
+                @Html.LabelFor(a => a.name)
+                @Html.TextBoxFor(a => a.name, new { @class = "form-control" })
+                @Html.ValidationMessageFor(a => a.name, null, new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                @Html.LabelFor(a => a.Adress)
+                @Html.TextBoxFor(a => a.Adress, new { @class = "form-control" })
+                @Html.ValidationMessageFor(a => a.Adress, null, new { @class = "text-danger" })
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Kaydet" class="btn btn-primary" />
+            </div>
+        }
+    </div>
+    <div class="row">
+        <a href="@Url.Action("index","customer")" class="btn btn-default"> Geri </a>
+    </div>
+</div>
+

@@ -1,0 +1,35 @@
+﻿@using OrderManagment.Core.Models
+@model IEnumerable<ProductListDataModel>
+@{
+    ViewBag.Title = "Index";
+}
+<div class="container">
+    <div class="row">
+        <table class="table" id="Productlist" style="width:500px">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Seç</th>
+                    <th scope="col">Ürün Adı</th>
+                    <th scope="col">Ürün Fiyatı</th>
+                    <th scope="col">Kategori</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.id</td>
+                        <th><input type="checkbox" value="@item.id" name="btnCheck" id="btnCheck" /></th>
+                        <td id="name">@item.name</td>
+                        <td id="price">@item.Price</td>
+                        <td id="catname">@item.CategoryName</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+
+

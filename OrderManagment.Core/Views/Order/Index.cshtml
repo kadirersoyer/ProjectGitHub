@@ -1,0 +1,77 @@
+﻿@using OrderManagment.Core.Models
+@model IEnumerable<OrderViewListDataModel>
+@{
+    ViewBag.Title = "Index";
+}
+<link href="//cdn.datatables.net/1.10.19/css/jquery.dataTables.min.css" rel="stylesheet" />
+<h2>Satış Listesi</h2>
+<hr />
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <a href="@Url.Action("CreateOrder","order")" class="btn btn-success"> Ekle </a>
+        </div>
+    </div>
+    <hr />
+    <div class="row">
+        <table class="table" id="Productlist">
+            <thead>
+                <tr>
+                    <th scope="col">Sipariş No</th>
+                    <th scope="col">Müşeri Adı</th>
+                    <th scope="col">Ürün Adı</th>
+                    <th scope="col">Ürün Adeti</th>
+                    <th scope="col">Total Fiyat</th>
+                    <th scope="col">Düzenle</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <th>@item.OrderNo</th>
+                        <td>@item.CustomerName</td>
+                        <td>@item.ProductName</td>
+                        <td>@item.Quantity</td>
+                        <td>@item.TotalPrice</td>
+                        <td><a href="@Url.Action("CreateOrder","order",new { id = item.OrderNo })" class="btn btn-warning small"> Düzenle </a></td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+@section scripts{
+    <script src="//cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $('#Productlist').DataTable({
+                "destroy": true,
+                "createdRow": function (row, data, dataIndex) {
+                    if (parseFloat(data[4]) > 1000) {
+                        $(row).css('color', 'red');
+                    }
+                }
+            });
+        });
+
+        var table = $('#Productlist').DataTable();
+
+        $('#Productlist tbody').on('click', 'tr', function () {
+            if ($(this).hasClass('selected')) {
+                $(this).removeClass('selected');
+            }
+            else {
+                table.$('tr.selected').removeClass('selected');
+                $(this).addClass('selected');
+            }
+        });
+
+        $('#button').click(function () {
+            table.row('.selected').remove().draw(false);
+        });
+
+       
+    </script>
+}
+

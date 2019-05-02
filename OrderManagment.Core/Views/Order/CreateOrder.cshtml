@@ -1,0 +1,86 @@
+﻿@using OrderManagment.Core.Models
+@model OrderViewDataModel
+@{
+    ViewBag.Title = "CreateOrder";
+}
+
+<h2>Satış Düzenle/Ekle</h2>
+<div class="container">
+
+    @using (Html.BeginForm("createorder", "order", FormMethod.Post, new { id = "orderform" }))
+    {
+        @Html.HiddenFor(a => a.Customer.id)
+        <div class="row">
+            @Html.DropDownListFor(a => a.Customer.id, new SelectList(Model.Customers, "id", "name"), new { @class = "form-control", @id = "customerid" })
+        </div>
+        <hr />
+        <div class="row">
+            <button type="button" class="btn btn-success" id="btnSelect"><span class="glyphicon glyphicon-list"></span> Seç </button>
+        </div>
+        <hr />
+        <div class="row">
+            <table class="table table-hover" id="OrderList">
+                <thead>
+                    <tr>
+                        <th>Ürün Adı</th>
+                        <th>Ürün Kategori</th>
+                        <th>Ürün Adet</th>
+                        <th>Ürün Fiyat</th>
+                        <th>Sil</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        foreach (var item in Model.OrderDetails)
+                        {
+                            <tr>
+                                <td id="OrderNo" style="display:none" data-id="@item.OrderNo"></td>
+                                <td id="OrderId" style="display:none">@item.OrderId</td>
+                                <td id="ProductId" style="display:none">@item.ProductId</td>
+                                <td>@item.ProductName</td>
+                                <td>@item.CategoryName</td>
+                                <td><input type="number" value="@item.Quantity" /></td>
+                                <td><input type="text" disabled value="@item.Price" /> </td>
+                                <td>
+                                    <button class="btn btn-danger" onclick="DeleteRow(this)">
+                                        <span class="glyphicon glyphicon-minus"></span> Sil
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    }
+
+                </tbody>
+            </table>
+        </div>
+        <div>
+            <button type="submit" class="btn btn-default"> <span class="glyphicon glyphicon-save"></span> Kaydet</button>
+        </div>
+    }
+
+    <div id="ProductModal" class="modal fade" role="dialog">
+        <div class="modal-dialog">
+
+            <!-- Modal content-->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    <h4 class="modal-title">Ürün Seç</h4>
+                </div>
+                <div class="modal-body">
+                    <div id="productContent">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" id="btnGetCheckedData" class="btn btn-primary">Seç</button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+@section scripts{
+    <script src="~/Scripts/order/orderdetail.js"></script>
+}
+
