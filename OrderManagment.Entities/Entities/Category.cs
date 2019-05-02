@@ -13,7 +13,7 @@ namespace OrderManagment.Entities.Entities
         {
             Products = new List<Product>();
         }
-        [Display(Name = "Açıkalama : ")]
+        [Display(Name = "Açıkalama :")]
         [Required(ErrorMessage = "Açıklama Alanı Zorunludur...")]
         public string Defination { get; set; }
         public List<Product> Products { get; set; }
