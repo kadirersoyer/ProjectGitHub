@@ -20,6 +20,8 @@ namespace OrderManagment.Core
             container.RegisterType<IRepository<Product>, Repository<Product>>();
             container.RegisterType<IRepository<Order>, Repository<Order>>();
 
+            container.RegisterType<IProductViewRepository, ProductViewRepository>();
+
             DependencyResolver.SetResolver(new UnityDependencyResolver(container));
         }
     }

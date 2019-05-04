@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using OrderManagment.Entities.Entities;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace OrderManagment.Core.Repositories

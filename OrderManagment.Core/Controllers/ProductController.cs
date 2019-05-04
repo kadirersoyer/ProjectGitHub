@@ -13,32 +13,21 @@ namespace OrderManagment.Core.Controllers
     {
         private IRepository<Product> _productServices;
         private IRepository<Category> _categoryServices;
-      
+        private IProductViewRepository _productViewDataServices;
+
         public ProductController(IRepository<Product> _productServices, 
-            IRepository<Category> _categoryServices)
+            IRepository<Category> _categoryServices,IProductViewRepository _productViewDataServices)
         {
             this._productServices = _productServices;
             this._categoryServices = _categoryServices;
+            this._productViewDataServices = _productViewDataServices;
         }
         // GET: Product
         public ActionResult Index()
         {
-            var products = _productServices.GetAll("product/getall/");
-            var categories = _categoryServices.GetAll("category/getall");
-
-            var DataList = (from p in products
-                            join c in categories on p.CategoryID equals c.id
-                            select new ProductListDataModel
-                            {
-                                CategoryName = c.name,
-                                id = p.id,
-                                CreateDate = p.CreateDate,
-                                Price = p.Price,
-                                name = p.name
-                            }).ToList();
-
-
-            return View(DataList);
+            var viewedata = _productViewDataServices.GetProductDetailLists("product/getproductdatalist");
+            return View(viewedata);
+           
         }
         [HttpGet]
         public ActionResult CreateProduct(int? id)

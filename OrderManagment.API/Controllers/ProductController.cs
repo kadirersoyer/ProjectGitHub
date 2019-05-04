@@ -56,5 +56,24 @@ namespace OrderManagment.API.Controllers
             _uow.SaveChanges();
         }
 
+        [Route("product/getproductdatalist")]
+        public IEnumerable<ProductDetailList> GetProductDataList()
+        {
+            var names = _productRepository.GetAll().ToList();
+            var DataList = (from p in _productRepository.GetAll().ToList()
+                            join c in _categoryRepository.GetAll().ToList() on p.CategoryID equals c.id
+                            select new ProductDetailList
+                            {
+                                CategoryName = c.name,
+                                id = p.id,
+                                CreateDate = p.CreateDate,
+                                Price = p.Price,
+                                name = p.name
+                            }).ToList();
+
+            return DataList;
+        }
+
+
     }
 }
