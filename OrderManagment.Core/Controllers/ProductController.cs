@@ -1,5 +1,6 @@
 ﻿
 using OrderManagment.Core.Models;
+using OrderManagment.Core.Repositories;
 using OrderManagment.Entities.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,19 +11,20 @@ namespace OrderManagment.Core.Controllers
 {
     public class ProductController : Controller
     {
-        private ApiBusiness.ProductApiCall ProductApiCall;
-        private ApiBusiness.CategoryApiCall CategoryApiCall;
-
-        public ProductController()
+        private IRepository<Product> _productServices;
+        private IRepository<Category> _categoryServices;
+      
+        public ProductController(IRepository<Product> _productServices, 
+            IRepository<Category> _categoryServices)
         {
-            ProductApiCall = new ApiBusiness.ProductApiCall();
-            CategoryApiCall = new ApiBusiness.CategoryApiCall();
+            this._productServices = _productServices;
+            this._categoryServices = _categoryServices;
         }
         // GET: Product
         public ActionResult Index()
         {
-            var products = ProductApiCall.GetProducts();
-            var categories = CategoryApiCall.GetAllCategories();
+            var products = _productServices.GetAll("product/getall/");
+            var categories = _categoryServices.GetAll("category/getall");
 
             var DataList = (from p in products
                             join c in categories on p.CategoryID equals c.id
@@ -44,11 +46,11 @@ namespace OrderManagment.Core.Controllers
             ProductDataModel model = new ProductDataModel();
 
             if (id != null)
-                model.Product = ProductApiCall.GetProductById((int)id);
+                model.Product = _productServices.GetById((int)id, "product/GetProductById");
             else
                 model.Product = new Product();
 
-            model.Categories = CategoryApiCall.GetAllCategories() as List<Category>;
+            model.Categories = _categoryServices.GetAll("category/getall") as List<Category>;
 
             return View(model);
         }
@@ -65,11 +67,11 @@ namespace OrderManagment.Core.Controllers
 
                 if (ProductDataModel.Product.id == 0)
                 {
-                    ProductApiCall.Insert(ProductDataModel.Product);
+                    _productServices.Insert(ProductDataModel.Product, "product/createproduct");
                 }
                 else
                 {
-                    ProductApiCall.Update(ProductDataModel.Product);
+                    _productServices.Update(ProductDataModel.Product, "product/updateproduct");
                 }
 
                 return RedirectToAction("Index");
@@ -77,7 +79,7 @@ namespace OrderManagment.Core.Controllers
             }
             else
             {
-                ProductDataModel.Categories = CategoryApiCall.GetAllCategories() as List<Category>;
+                ProductDataModel.Categories = _categoryServices.GetAll("category/getall") as List<Category>;
             }
             return View(ProductDataModel);
 
@@ -85,7 +87,7 @@ namespace OrderManagment.Core.Controllers
        
         public ActionResult DeleteProduct(int id)
         {
-            ProductApiCall.Delete(id);
+            _categoryServices.Delete(id, "category/delete/");
             return RedirectToAction("Index");
 
         }

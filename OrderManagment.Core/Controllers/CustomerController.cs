@@ -1,4 +1,5 @@
-﻿using OrderManagment.Entities.Entities;
+﻿using OrderManagment.Core.Repositories;
+using OrderManagment.Entities.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,16 +10,16 @@ namespace OrderManagment.Core.Controllers
 {
     public class CustomerController : Controller
     {
-        private ApiBusiness.CustomerApiCall CustomerApiCall;
+        private IRepository<Customer> _customerServices;
 
-        public CustomerController()
+        public CustomerController(IRepository<Customer> _customerServices)
         {
-            CustomerApiCall = new ApiBusiness.CustomerApiCall();
+            this._customerServices = _customerServices;
         }
         // GET: Customer
         public ActionResult Index()
         {
-            var DataList = CustomerApiCall.GetAllCustomers();
+            var DataList = _customerServices.GetAll("customer/getall");
             return View(DataList);
         }
 
@@ -28,7 +29,7 @@ namespace OrderManagment.Core.Controllers
             Customer model = new Customer();
 
             if (id != null)
-                model = CustomerApiCall.GetCustomerById((int)id);
+                model = _customerServices.GetById((int)id, "customer/GetCustomerById/");
             else
                 model = new Customer();
 
@@ -47,11 +48,11 @@ namespace OrderManagment.Core.Controllers
 
                 if (customer.id == 0)
                 {
-                    CustomerApiCall.Insert(customer);
+                    _customerServices.Insert(customer, "customer/createcustomer");
                 }
                 else
                 {
-                    CustomerApiCall.Update(customer);
+                    _customerServices.Update(customer, "customer/updatecustomer");
                 }
 
                 return RedirectToAction("Index");
@@ -63,7 +64,7 @@ namespace OrderManagment.Core.Controllers
        
         public ActionResult DeleteCustomer(int id)
         {
-            CustomerApiCall.Delete(id);
+            _customerServices.Delete(id, "customer/delete/");
             return RedirectToAction("Index");
 
         }

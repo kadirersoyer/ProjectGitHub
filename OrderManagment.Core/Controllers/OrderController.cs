@@ -1,4 +1,5 @@
 ﻿using OrderManagment.Core.Models;
+using OrderManagment.Core.Repositories;
 using OrderManagment.Entities.Entities;
 using System;
 using System.Collections.Generic;
@@ -9,24 +10,29 @@ namespace OrderManagment.Core.Controllers
 {
     public class OrderController : Controller
     {
-        private ApiBusiness.ProductApiCall ProductApiCall;
-        private ApiBusiness.CustomerApiCall CustomerApiCall;
-        private ApiBusiness.OrderApiCall OrderApiCall;
-        private ApiBusiness.CategoryApiCall CategoryApiCall;
-
-        public OrderController()
+      
+        private IRepository<Product> _productServices;
+        private IRepository<Customer> _customerServices;
+        private IRepository<Order> _orderServices;
+        private IRepository<Category> _categoryServices;
+      
+        public OrderController(IRepository<Product> _productServices,
+                    IRepository<Customer> _customerServices, 
+                    IRepository<Order> _orderRepository,
+                    IRepository<Category> _categoryServices)
         {
-            ProductApiCall = new ApiBusiness.ProductApiCall();
-            CustomerApiCall = new ApiBusiness.CustomerApiCall();
-            OrderApiCall = new ApiBusiness.OrderApiCall();
-            CategoryApiCall = new ApiBusiness.CategoryApiCall();
+
+            this._productServices = _productServices;
+            this._customerServices = _customerServices;
+            this._orderServices = _orderRepository;
+            this._categoryServices = _categoryServices;
         }
         // GET: Order
         public ActionResult Index()
         {
-            var products = ProductApiCall.GetProducts();
-            var customers = CustomerApiCall.GetAllCustomers();
-            var orders = OrderApiCall.GetAllOrders();
+            var products = _productServices.GetAll("product/getall");
+            var customers = _customerServices.GetAll("customer/getall");
+            var orders = _orderServices.GetAll("order/getall");
 
             var data = (from p in products
                         join o in orders on p.id equals o.ProductID
@@ -50,10 +56,10 @@ namespace OrderManagment.Core.Controllers
         {
             OrderViewDataModel model = new OrderViewDataModel();
 
-            var products = ProductApiCall.GetProducts();
-            var customers = CustomerApiCall.GetAllCustomers();
-            var orders = OrderApiCall.GetAllOrders();
-            var categories = CategoryApiCall.GetAllCategories();
+            var products = _productServices.GetAll("product/getall");
+            var customers = _customerServices.GetAll("customer/getall");
+            var orders = _orderServices.GetAll("order/getall");
+            var categories = _categoryServices.GetAll("category/getall");
 
             var data = (from p in products
                         join o in orders on p.id equals o.ProductID
@@ -89,7 +95,7 @@ namespace OrderManagment.Core.Controllers
 
             model.OrderDetails = data;
 
-            model.Customers = CustomerApiCall.GetAllCustomers() as List<Customer>;
+            model.Customers = _customerServices.GetAll("customer/getall") as List<Customer>;
 
             return View(model);
         }
@@ -103,7 +109,7 @@ namespace OrderManagment.Core.Controllers
               
                 int no = order.FirstOrDefault().OrderNo;
 
-                var Orders = OrderApiCall.GetAllOrders();
+                var Orders = _orderServices.GetAll("order/getall");
 
                 var DBRows = Orders.Where(a => a.OrderNo == no);
 
@@ -129,7 +135,7 @@ namespace OrderManagment.Core.Controllers
                         item.name = "Satış";
                         //item.OrderNo = guid;
                         item.OrderNo = no;
-                        OrderApiCall.Insert(item);
+                        _orderServices.Insert(item,"order/create");
                     }
                 }
                 // UpdateRows
@@ -139,7 +145,7 @@ namespace OrderManagment.Core.Controllers
                     if (data != null)
                     {
                         item.name = "Satış";
-                        OrderApiCall.Update(item);
+                        _orderServices.Update(item,"order/update");
                     }
                 }
                 // DeletedRows
@@ -149,7 +155,7 @@ namespace OrderManagment.Core.Controllers
                     var data = newRows.Where(a => a.id == item.id).SingleOrDefault();
                     if (data == null)
                     {
-                        OrderApiCall.Delete(item.id);
+                        _orderServices.Delete(item.id,"order/delete");
                     }
                 }
                 result.message = "İşlem Tamamlandı";
@@ -166,8 +172,8 @@ namespace OrderManagment.Core.Controllers
         [HttpGet]
         public PartialViewResult GetProductList()
         {
-            var products = ProductApiCall.GetProducts();
-            var categories = CategoryApiCall.GetAllCategories();
+            var products = _productServices.GetAll("product/getall");
+            var categories = _categoryServices.GetAll("category/getall");
 
             var DataList = (from p in products
                             join c in categories on p.CategoryID equals c.id

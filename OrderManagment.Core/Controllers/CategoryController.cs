@@ -1,4 +1,5 @@
 ﻿using OrderManagment.Core.Models;
+using OrderManagment.Core.Repositories;
 using OrderManagment.Entities.Entities;
 using System;
 using System.Collections.Generic;
@@ -10,16 +11,16 @@ namespace OrderManagment.Core.Controllers
 {
     public class CategoryController : Controller
     {
-        private ApiBusiness.CategoryApiCall categoryApiCal;
+        private IRepository<Category> _categoryServices;
 
-        public CategoryController()
+        public CategoryController(IRepository<Category> _categoryServices)
         {
-            categoryApiCal = new ApiBusiness.CategoryApiCall();
+            this._categoryServices = _categoryServices;
         }
         // GET: Category
         public ActionResult Index()
         {
-            var DataList = categoryApiCal.GetAllCategories();
+            var DataList = _categoryServices.GetAll("category/getall");
             return View(DataList);
         }
 
@@ -29,7 +30,7 @@ namespace OrderManagment.Core.Controllers
             Category model = new Category();
 
             if (id != null)
-                model = categoryApiCal.GetCategoryById((int)id);
+                model = _categoryServices.GetById((int)id, "category/GetCategoryById/");
             else
                 model = new Category();
 
@@ -48,11 +49,11 @@ namespace OrderManagment.Core.Controllers
 
                 if (Category.id == 0)
                 {
-                    categoryApiCal.Insert(Category);
+                    _categoryServices.Insert(Category, "category/createcategory");
                 }
                 else
                 {
-                    categoryApiCal.Update(Category);
+                    _categoryServices.Update(Category, "category/updatecategory");
                 }
 
                 return RedirectToAction("Index");
@@ -63,7 +64,7 @@ namespace OrderManagment.Core.Controllers
        
         public ActionResult DeleteCategory(int id)
         {
-            categoryApiCal.Delete(id);
+            _categoryServices.Delete(id, "category/delete/");
             return RedirectToAction("Index");
 
         }
